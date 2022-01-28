@@ -83,9 +83,14 @@ function createBot () {
     }
   })
 
-  bot.on('health', () => {
-    bot.chat(`I have ${bot.health} health and ${bot.food} food`)
-  })
+ 
+
+
+  if (${bot.health}<10){
+    bot.chat(`I'm low on health = ${bot.health} health and ${bot.food} food`)
+    bot.chat(`maybe attacked by vex, quitting now!`)
+    bot.quit(`quit`)
+  }
 
   bot.on("chat", function(username, message){
       if(config.utils['chat-log']){
