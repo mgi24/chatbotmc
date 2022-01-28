@@ -73,24 +73,29 @@ function createBot () {
         }
       }
 
+      bot.on('chat', (username, message) => {
+        
+        if (message === 'health') healthcheck()
+        
+      })
+      
+
       
       
   })
 
-  bot.on('playerJoined', (player) => {
-    if (player.username !== bot.username) {
-      bot.chat(`Hello, ${player.username}! Welcome to the server !`)
-    }
-  })
+  
+  function healthcheck () {
+      
+        bot.chat(`I have ${bot.health} health and ${bot.food} food`)
+      
+    
 
- 
-
-
-  if (${bot.health}<10){
-    bot.chat(`I'm low on health = ${bot.health} health and ${bot.food} food`)
-    bot.chat(`maybe attacked by vex, quitting now!`)
-    bot.quit(`quit`)
   }
+  
+
+
+  
 
   bot.on("chat", function(username, message){
       if(config.utils['chat-log']){
