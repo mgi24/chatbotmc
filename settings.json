@@ -1,0 +1,47 @@
+{
+    "bot-account":{ 
+        "username": "BaseLoader",
+        "password": "",
+        "type": ""
+    },
+
+    "server":{
+        "ip": "zura.aternos.me",
+        "port": 36312,
+        "version": "1.18"
+    },
+
+    "position":{
+        "enabled": false,
+        "x": 0,
+        "y": 0,
+        "z": 0
+    },
+
+    "utils":{
+        "auto-auth":{
+            "enabled": false,
+            "password": "12345678"
+        },
+
+        "anti-afk":{
+            "enabled": true,
+            "sneak": false
+        },
+
+        "chat-messages":{
+            "enabled": true,
+            "repeat": false,
+            "repeat-delay": 60,
+
+            "messages": [
+                "LOADING BASE...",
+                
+                
+            ]
+        },
+
+        "chat-log": true,
+        "auto-reconnect": true
+    }
+}
