@@ -5,6 +5,13 @@
         "type": ""
     },
 
+    "bot-account1":{ 
+        "username": "NetherGuardian",
+        "password": "",
+        "type": ""
+    },
+    
+
     "server":{
         "ip": "zura.aternos.me",
         "port": 36312,
@@ -35,7 +42,7 @@
             "repeat-delay": 60,
 
             "messages": [
-                "LOADING BASE..."
+                "LOADING..."
             ]
         },
 
