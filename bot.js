@@ -117,6 +117,7 @@ function createBot () {
   if(config.utils['auto-reconnect']){
       bot.on('end', function(){
         createBot()
+        createBot1()
         
       })
   }
@@ -124,6 +125,7 @@ function createBot () {
   bot.on('kicked', (reason) => console.log('\x1b[33m',`[BotLog] Bot was kicked from the server. Reason: \n${reason}`, '\x1b[0m'))
   bot.on('error', err => console.log(`\x1b[31m[ERROR] ${err.message}`, '\x1b[0m'))
 
+  createBot1()
 }
 
 
@@ -237,12 +239,7 @@ function createBot1 () {
       bot.chat(`BOT has been died, respawn location ${bot.entity.position}`)
   })
 
-  if(config.utils['auto-reconnect']){
-      bot.on('end', function(){
-        createBot()
-        
-      })
-  }
+  
 
   bot.on('kicked', (reason) => console.log('\x1b[33m',`[BotLog] Bot was kicked from the server. Reason: \n${reason}`, '\x1b[0m'))
   bot.on('error', err => console.log(`\x1b[31m[ERROR] ${err.message}`, '\x1b[0m'))
@@ -250,4 +247,3 @@ function createBot1 () {
 }
 
 createBot()
-createBot1()
