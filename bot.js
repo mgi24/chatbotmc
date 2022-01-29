@@ -4,6 +4,7 @@ const pathfinder = require('mineflayer-pathfinder').pathfinder
 const { GoalBlock} = require('mineflayer-pathfinder').goals
 
 const config = require('./settings.json');
+var pi = 3.14159;
 
 function createBot () {
   const bot = mineflayer.createBot({
@@ -23,6 +24,7 @@ function createBot () {
   bot.settings.colorsEnabled = false
 
   bot.once("spawn", function(){
+
       console.log("\x1b[33m[BotLog] Bot joined to the server", '\x1b[0m')
 
       if(config.utils['auto-auth'].enabled){
@@ -36,6 +38,7 @@ function createBot () {
 
           console.log(`[Auth] Authentification commands executed.`)
       }
+      
 
       if(config.utils['chat-messages'].enabled){
         console.log("[INFO] Started chat-messages module")
@@ -80,8 +83,13 @@ function createBot () {
         if (message === 'health') healthcheck()
         
       })
-      
 
+      
+  bot.on('time', function(time) {
+                var yaw = Math.random()*pi - (0.5*pi);
+                var pitch = Math.random()*pi - (0.5*pi);
+                bot.look(yaw,-90,false);
+  });
       
       
   })
@@ -206,6 +214,11 @@ function createBot1 () {
         
       })
       
+      bot.on('time', function(time) {
+        var yaw = Math.random()*pi - (0.5*pi);
+        var pitch = Math.random()*pi - (0.5*pi);
+        bot.look(yaw,-90,false);
+});
 
       
       
