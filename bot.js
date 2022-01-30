@@ -81,7 +81,7 @@ function createBot () {
       bot.on('chat', (username, message) => {
         
         if (message === 'health') healthcheck()
-        if (message === 'afkbase') baseafk()
+        if (message === 'hitbase') baseafk()
         
       })
 
@@ -222,7 +222,7 @@ function createBot1 () {
       bot.on('chat', (username, message) => {
         
         if (message === 'health') healthcheck()
-        if (message === 'afknether') netherafk()
+        if (message === 'hitnether') netherafk()
         
       })
       
