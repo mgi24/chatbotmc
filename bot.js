@@ -81,6 +81,7 @@ function createBot () {
       bot.on('chat', (username, message) => {
         
         if (message === 'health') healthcheck()
+        if (message === 'afkbase') baseafk()
         
       })
 
@@ -89,7 +90,12 @@ function createBot () {
                 var yaw = Math.random()*pi - (0.5*pi);
                 var pitch = Math.random()*pi - (0.5*pi);
                 bot.look(yaw,-90,false);
+                
+                
+        
   });
+
+  
       
       
   })
@@ -102,6 +108,11 @@ function createBot () {
     
 
   }
+  function baseafk () {
+    setInterval(function() {bot.attack(bot.nearestEntity())}, 10000);
+      
+
+}
   
 
 
@@ -211,6 +222,7 @@ function createBot1 () {
       bot.on('chat', (username, message) => {
         
         if (message === 'health') healthcheck()
+        if (message === 'afknether') netherafk()
         
       })
       
@@ -218,12 +230,17 @@ function createBot1 () {
         var yaw = Math.random()*pi - (0.5*pi);
         var pitch = Math.random()*pi - (0.5*pi);
         bot.look(yaw,-90,false);
+        bot.activateItem()
 });
 
       
       
   })
+  function netherafk () {
+    setInterval(function() {bot.attack(bot.nearestEntity())}, 10000);
+      
 
+}
   
   function healthcheck () {
       
