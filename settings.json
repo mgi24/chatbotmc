@@ -13,8 +13,8 @@
     
 
     "server":{
-        "ip": "zura.aternos.me",
-        "port": 36312,
+        "ip": "milk.ploudos.com",
+        "port": 18091,
         "version": "1.18"
     },
 
