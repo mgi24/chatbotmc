@@ -10,11 +10,23 @@
         "password": "",
         "type": ""
     },
+
+    "bot-account-gold":{ 
+        "username": "GoldaCofee",
+        "password": "",
+        "type": ""
+    },
+
+    "bot-account-gold1":{ 
+        "username": "PogGer",
+        "password": "",
+        "type": ""
+    },
     
 
     "server":{
-        "ip": "milk.ploudos.com",
-        "port": 18091,
+        "ip": "thomas.ploudos.com",
+        "port": 10247,
         "version": "1.18"
     },
 
