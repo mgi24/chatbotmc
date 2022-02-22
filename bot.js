@@ -522,7 +522,7 @@ function createBotgold1 () {
 
 
   function netherafk () {
-    setInterval(function() {bot.attack(bot.nearestEntity())}, 1500);
+    setInterval(function() {bot.attack(bot.nearestEntity())}, 1800);
       
 
 }
