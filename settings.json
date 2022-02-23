@@ -25,8 +25,8 @@
     
 
     "server":{
-        "ip": "null.ploudos.com",
-        "port": 10478,
+        "ip": "pot.ploudos.com",
+        "port": 17410,
         "version": "1.18"
     },
 
