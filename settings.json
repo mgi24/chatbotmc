@@ -22,6 +22,12 @@
         "password": "",
         "type": ""
     },
+
+    "bot-account-rider":{ 
+        "username": "Riders",
+        "password": "",
+        "type": ""
+    },
     
 
     "server":{

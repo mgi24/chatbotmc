@@ -6,6 +6,7 @@ const { GoalBlock} = require('mineflayer-pathfinder').goals
 const config = require('./settings.json');
 var pi = 3.14159;
 var allowgoldreconnect=1;
+var reconnect=0;
 
 function createBot () {
   const bot = mineflayer.createBot({
@@ -84,6 +85,7 @@ function createBot () {
         if (message === 'health') healthcheck()
         if (message === 'hitbase') baseafk()
         if (message === 'panen emas') startemas()
+        if (message === 'raider') raidfarm()
         
       })
 
@@ -568,6 +570,154 @@ function lookatthis(){
 
 }
 
+
+
+
+
+
+
+
+
+function raidfarm () {
+  const bot = mineflayer.createBot({
+      username: config['bot-account-rider']['username'],
+      password: config['bot-account-rider']['password'],
+      auth: config['bot-account-rider']['type'],
+      host: config.server.ip,
+      port: config.server.port,
+      version: config.server.version
+  })
+
+  bot.loadPlugin(pathfinder)
+  const mcData = require('minecraft-data')(bot.version)
+  const defaultMove = new Movements(bot, mcData)
+  bot.settings.colorsEnabled = false
+
+  bot.once("spawn", function(){
+      console.log("\x1b[33m[BotLog] Bot joined to the server", '\x1b[0m')
+
+      if(config.utils['auto-auth'].enabled){
+        console.log("[INFO] Started auto-auth module")
+
+          var password = config.utils['auto-auth'].password
+          setTimeout(function() {
+              bot.chat(`/register ${password} ${password}`)
+              bot.chat(`/login ${password}`)
+          }, 500);
+
+          console.log(`[Auth] Authentification commands executed.`)
+      }
+
+      bot.chat('look = lookdown')
+      bot.chat('attack = atk armorstand')
+      bot.chat('level, health, quit')
+      
+
+      const pos = config.position
+
+      if (config.position.enabled){
+          console.log(`\x1b[32m[BotLog] Starting moving to target location (${pos.x}, ${pos.y}, ${pos.z})\x1b[0m`)
+          bot.pathfinder.setMovements(defaultMove)
+          bot.pathfinder.setGoal(new GoalBlock(pos.x, pos.y, pos.z))
+      }
+      
+      if(config.utils['anti-afk'].enabled){
+        bot.setControlState('jump', true)
+        if(config.utils['anti-afk'].sneak){
+            bot.setControlState('sneak', true)
+        }
+      }
+
+      
+      bot.on('chat', (username, message) => {
+        
+        if (message === 'attack') startfarm()
+        if (message === 'health') healthcheck()
+        if (message === 'level') levelcheck()
+        if (message === 'quit') quitbot()
+        if (message === 'look') lookatthis()
+        
+        
+      })
+    
+      
+  })
+  
+function lookatthis(){
+  bot.look(0,-1.5,false);
+}
+
+  
+  bot.on('entitySpawn', (entity) => {
+    if (entity.name === 'vex') {
+      console.log('ADA VEX');
+      bot.chat(`${entity.mobType} spawned at ${entity.position}, IM OUTTA HERE!!!`)
+
+      quitbot()
+    }
+    
+  })
+  
+function healthcheck () {
+      
+        bot.chat(`I have ${bot.health} health and ${bot.food} food`)
+        
+  }
+  
+ function levelcheck () {
+      
+        bot.chat(`I am level ${bot.experience.level}`)
+
+  }
+
+  function startfarm(){
+    bot.chat(`Attacking ${bot.nearestEntity()}`)
+    setInterval(attackEntity, 1500);
+  }
+  function attackEntity () {
+    
+    const entity = bot.nearestEntity()
+    if (!entity) {
+      bot.chat('No nearby entities')
+    } else {
+      //bot.chat(`Attacking ${entity.name ?? entity.username}`)
+      
+      bot.attack(entity);
+    }
+  }
+  
+  function quitbot () {
+    bot.quit(`quitting`)
+    reconnect=1;
+  }
+  
+
+  bot.on("chat", function(username, message){
+      if(config.utils['chat-log']){
+          console.log(`[ChatLog] <${username}> ${message}`)
+      }
+  })
+
+  bot.on("goal_reached", function(){
+      console.log(`\x1b[32m[BotLog] Bot arrived to target location. ${bot.entity.position}\x1b[0m`)
+  })
+
+  bot.on("death", function(){
+      console.log(`\x1b[33m[BotLog] Bot has been died and was respawned ${bot.entity.position}`, '\x1b[0m')
+  })
+
+  if(config.utils['auto-reconnect']){
+      bot.on('end', function(){
+          if (reconnect === 0){
+            raidfarm()
+          }
+      })
+  }
+
+  bot.on('kicked', (reason) => console.log('\x1b[33m',`[BotLog] Bot was kicked from the server. Reason: \n${reason}`, '\x1b[0m'))
+  bot.on('error', err => console.log(`\x1b[31m[ERROR] ${err.message}`, '\x1b[0m'))
+
+}
 
 
 
