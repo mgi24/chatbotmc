@@ -31,8 +31,8 @@
     
 
     "server":{
-        "ip": "sword.ploudos.com",
-        "port": 12560,
+        "ip": "crypto.ploudos.com",
+        "port": 19301,
         "version": "1.18"
     },
 
