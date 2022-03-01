@@ -86,6 +86,7 @@ function createBot () {
         if (message === 'hitbase') baseafk()
         if (message === 'panen emas') startemas()
         if (message === 'raider') raidfarm()
+        if (message === 'based') createBot1()
         
       })
 
@@ -143,7 +144,7 @@ function createBot () {
   if(config.utils['auto-reconnect']){
       bot.on('end', function(){
         createBot()
-        createBot1()
+        
         
       })
   }
@@ -151,7 +152,7 @@ function createBot () {
   bot.on('kicked', (reason) => console.log('\x1b[33m',`[BotLog] Bot was kicked from the server. Reason: \n${reason}`, '\x1b[0m'))
   bot.on('error', err => console.log(`\x1b[31m[ERROR] ${err.message}`, '\x1b[0m'))
 
-  createBot1()
+  
 }
 
 
@@ -270,6 +271,15 @@ function createBot1 () {
   bot.on("goal_reached", function(){
       console.log(`\x1b[32m[BotLog] Bot arrived to target location. ${bot.entity.position}\x1b[0m`)
   })
+  
+  
+  if(config.utils['auto-reconnect']){
+      bot.on('end', function(){
+        createBot1()
+        
+        
+      })
+  }
 
   bot.on("death", function(){
       console.log(`\x1b[33m[BotLog] Bot has been died and was respawned ${bot.entity.position}`, '\x1b[0m')
