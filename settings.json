@@ -25,7 +25,7 @@
     
 
     "server":{
-        "ip": "word.ploudos.com",
+        "ip": "sword.ploudos.com",
         "port": 12560,
         "version": "1.18"
     },
