@@ -31,8 +31,8 @@
     
 
     "server":{
-        "ip": "tree.ploudos.com",
-        "port": 10623,
+        "ip": "jonas.ploudos.com",
+        "port": 16689,
         "version": "1.18"
     },
 
