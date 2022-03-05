@@ -1,14 +1,6 @@
-# minecraftbot2
-this bot is for raid farm
+# minecraftbot pack
+include afk bot (active obnly  with armorstand)
+include raid farm bot (all command showed upon joining)
+include auto attack for multi mobfarm (for now only goldfarm)
 
-look = lookup
-
-attack = start farm
-
-quit
-
-health
-
-level
-
-autoquit if there is vex nearby
+FUTURE FEATURE: pathfinding
