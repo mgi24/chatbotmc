@@ -31,8 +31,8 @@
     
 
     "server":{
-        "ip": "jonas.ploudos.com",
-        "port": 16689,
+        "ip": "bak.ploudos.com",
+        "port": 10041,
         "version": "1.18"
     },
 
