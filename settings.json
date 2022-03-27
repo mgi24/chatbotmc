@@ -31,8 +31,8 @@
     
 
     "server":{
-        "ip": "159.223.62.160",
-        "port": 25565,
+        "ip": "pasta.ploudos.com",
+        "port": 14436,
         "version": "1.18"
     },
 
