@@ -31,7 +31,7 @@
     
 
     "server":{
-        "ip": "pcgid.mcalias.com",
+        "ip": "rice.ploudos.com",
         "port": 18605,
         "version": "1.18"
     },
