@@ -31,8 +31,8 @@
     
 
     "server":{
-        "ip": "pasta.ploudos.com",
-        "port": 14436,
+        "ip": "pcgid.mcalias.com",
+        "port": 18605,
         "version": "1.18"
     },
 
