@@ -31,8 +31,8 @@
     
 
     "server":{
-        "ip": "rice.ploudos.com",
-        "port": 18605,
+        "ip": "mouse.ploudos.com",
+        "port": 16753,
         "version": "1.18"
     },
 
