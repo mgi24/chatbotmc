@@ -31,8 +31,8 @@
     
 
     "server":{
-        "ip": "mouse.ploudos.com",
-        "port": 16753,
+        "ip": "hippy.ploudos.com",
+        "port": 12950,
         "version": "1.18"
     },
 
