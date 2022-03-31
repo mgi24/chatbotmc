@@ -31,8 +31,8 @@
     
 
     "server":{
-        "ip": "hippy.ploudos.com",
-        "port": 12950,
+        "ip": "city.ploudos.com",
+        "port": 11688,
         "version": "1.18"
     },
 
