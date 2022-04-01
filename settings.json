@@ -31,8 +31,8 @@
     
 
     "server":{
-        "ip": "city.ploudos.com",
-        "port": 11688,
+        "ip": "windows.ploudos.com",
+        "port": 14209,
         "version": "1.18"
     },
 
