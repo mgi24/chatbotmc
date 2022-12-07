@@ -1,0 +1,39 @@
+{
+    "server":{
+        "ip": "pcgid.mcalias.com",
+        "port": 25560,
+        "version": "1.18"
+    },
+
+    "position":{
+        "enabled": false,
+        "x": 0,
+        "y": 0,
+        "z": 0
+    },
+
+    "utils":{
+        "auto-auth":{
+            "enabled": false,
+            "password": "12345678"
+        },
+
+        "anti-afk":{
+            "enabled": false,
+            "sneak": false
+        },
+
+        "chat-messages":{
+            "enabled": true,
+            "repeat": false,
+            "repeat-delay": 60,
+
+            "messages": [
+                "LOADING..."
+            ]
+        },
+
+        "chat-log": true,
+        "auto-reconnect": true
+    }
+}
