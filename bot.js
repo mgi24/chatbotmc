@@ -1,741 +1,413 @@
 const mineflayer = require('mineflayer')
-const Movements = require('mineflayer-pathfinder').Movements
-const pathfinder = require('mineflayer-pathfinder').pathfinder
-const { GoalBlock} = require('mineflayer-pathfinder').goals
 
+const autoeat = require('mineflayer-auto-eat').plugin
 const config = require('./settings.json');
+
 var pi = 3.14159;
-var allowgoldreconnect=1;
-var reconnect=0;
 
-function createBot () {
-  const bot = mineflayer.createBot({
-      username: config['bot-account']['username'],
-      password: config['bot-account']['password'],
-      auth: config['bot-account']['type'],
-      host: config.server.ip,
-      port: config.server.port,
-      version: config.server.version
-  })
-
-  
-
-  bot.loadPlugin(pathfinder)
-  const mcData = require('minecraft-data')(bot.version)
-  const defaultMove = new Movements(bot, mcData)
-  bot.settings.colorsEnabled = false
-
-  bot.once("spawn", function(){
-
-      console.log("\x1b[33m[BotLog] Bot joined to the server", '\x1b[0m')
-
-      if(config.utils['auto-auth'].enabled){
-        console.log("[INFO] Started auto-auth module")
-
-          var password = config.utils['auto-auth'].password
-          setTimeout(function() {
-              bot.chat(`/register ${password} ${password}`)
-              bot.chat(`/login ${password}`)
-          }, 500);
-
-          console.log(`[Auth] Authentification commands executed.`)
-      }
-      
-
-      if(config.utils['chat-messages'].enabled){
-        console.log("[INFO] Started chat-messages module")
-        var messages = config.utils['chat-messages']['messages']
-
-          if(config.utils['chat-messages'].repeat){
-            var delay = config.utils['chat-messages']['repeat-delay']
-            let i = 0
-
-            let msg_timer = setInterval(() => {
-                bot.chat(`${messages[i]}`)
-
-                if(i+1 == messages.length){
-                    i = 0
-                } else i++
-            }, delay * 1000)
-          } else {
-              messages.forEach(function(msg){
-                  bot.chat(msg)
-              })
-        }
-      }
-      
-
-      const pos = config.position
-
-      if (config.position.enabled){
-          console.log(`\x1b[32m[BotLog] Starting moving to target location (${pos.x}, ${pos.y}, ${pos.z})\x1b[0m`)
-          bot.pathfinder.setMovements(defaultMove)
-          bot.pathfinder.setGoal(new GoalBlock(pos.x, pos.y, pos.z))
-      }
-      
-      if(config.utils['anti-afk'].enabled){
-        bot.setControlState('jump', true)
-        if(config.utils['anti-afk'].sneak){
-            bot.setControlState('sneak', true)
-        }
-      }
-
-      bot.on('chat', (username, message) => {
-        
-        if (message === 'health') healthcheck()
-        if (message === 'hitbase') baseafk()
-        if (message === 'panen emas') startemas()
-        if (message === 'raider') raidfarm()
-        if (message === 'based') createBot1()
-        
-      })
-
-      
-  bot.on('time', function(time) {
-                var yaw = Math.random()*pi - (0.5*pi);
-                var pitch = Math.random()*pi - (0.5*pi);
-                bot.look(yaw,-90,false);
-                
-                
-        
-  });
-
-  
-      
-      
-  })
-
-  function startemas () {
-    createBotgold();
-    allowgoldreconnect=1;
-  }
-  function healthcheck () {
-      
-        bot.chat(`I have ${bot.health} health and ${bot.food} food`)
-      
-    
-
-  }
-  function baseafk () {
-    setInterval(function() {bot.attack(bot.nearestEntity())}, 10000);
-      
-
-}
-  
-
-
-  
-
-  bot.on("chat", function(username, message){
-      if(config.utils['chat-log']){
-          console.log(`[ChatLog] <${username}> ${message}`)
-      }
-  })
-
-  bot.on("goal_reached", function(){
-      console.log(`\x1b[32m[BotLog] Bot arrived to target location. ${bot.entity.position}\x1b[0m`)
-  })
-
-  bot.on("death", function(){
-      console.log(`\x1b[33m[BotLog] Bot has been died and was respawned ${bot.entity.position}`, '\x1b[0m')
-      bot.chat(`BOT has been died, respawn location ${bot.entity.position}`)
-  })
-
-  if(config.utils['auto-reconnect']){
-      bot.on('end', function(){
-        createBot()
-        
-        
-      })
-  }
-
-  bot.on('kicked', (reason) => console.log('\x1b[33m',`[BotLog] Bot was kicked from the server. Reason: \n${reason}`, '\x1b[0m'))
-  bot.on('error', err => console.log(`\x1b[31m[ERROR] ${err.message}`, '\x1b[0m'))
-
-  
-}
-
-
-
-function createBot1 () {
-  const bot = mineflayer.createBot({
-      username: config['bot-account1']['username'],
-      password: config['bot-account1']['password'],
-      auth: config['bot-account1']['type'],
-      host: config.server.ip,
-      port: config.server.port,
-      version: config.server.version
-  })
-
-  
-
-  bot.loadPlugin(pathfinder)
-  const mcData = require('minecraft-data')(bot.version)
-  const defaultMove = new Movements(bot, mcData)
-  bot.settings.colorsEnabled = false
-
-  bot.once("spawn", function(){
-      console.log("\x1b[33m[BotLog] Bot joined to the server", '\x1b[0m')
-
-      if(config.utils['auto-auth'].enabled){
-        console.log("[INFO] Started auto-auth module")
-
-          var password = config.utils['auto-auth'].password
-          setTimeout(function() {
-              bot.chat(`/register ${password} ${password}`)
-              bot.chat(`/login ${password}`)
-          }, 500);
-
-          console.log(`[Auth] Authentification commands executed.`)
-      }
-
-      if(config.utils['chat-messages'].enabled){
-        console.log("[INFO] Started chat-messages module")
-        var messages = config.utils['chat-messages']['messages']
-
-          if(config.utils['chat-messages'].repeat){
-            var delay = config.utils['chat-messages']['repeat-delay']
-            let i = 0
-
-            let msg_timer = setInterval(() => {
-                bot.chat(`${messages[i]}`)
-
-                if(i+1 == messages.length){
-                    i = 0
-                } else i++
-            }, delay * 1000)
-          } else {
-              messages.forEach(function(msg){
-                  bot.chat(msg)
-              })
-        }
-      }
-      
-
-      const pos = config.position
-
-      if (config.position.enabled){
-          console.log(`\x1b[32m[BotLog] Starting moving to target location (${pos.x}, ${pos.y}, ${pos.z})\x1b[0m`)
-          bot.pathfinder.setMovements(defaultMove)
-          bot.pathfinder.setGoal(new GoalBlock(pos.x, pos.y, pos.z))
-      }
-      
-      if(config.utils['anti-afk'].enabled){
-        bot.setControlState('jump', true)
-        if(config.utils['anti-afk'].sneak){
-            bot.setControlState('sneak', true)
-        }
-      }
-
-      bot.on('chat', (username, message) => {
-        
-        if (message === 'health') healthcheck()
-        if (message === 'hitnether') netherafk()
-        
-      })
-      
-      bot.on('time', function(time) {
-        var yaw = Math.random()*pi - (0.5*pi);
-        var pitch = Math.random()*pi - (0.5*pi);
-        bot.look(yaw,-90,false);
-        bot.activateItem()
-});
-
-      
-      
-  })
-  function netherafk () {
-    setInterval(function() {bot.attack(bot.nearestEntity())}, 10000);
-      
-
-}
-  
-  function healthcheck () {
-      
-        bot.chat(`I have ${bot.health} health and ${bot.food} food`)
-      
-    
-
-  }
-  
-
-
-  
-
-  bot.on("chat", function(username, message){
-      if(config.utils['chat-log']){
-          console.log(`[ChatLog] <${username}> ${message}`)
-      }
-  })
-
-  bot.on("goal_reached", function(){
-      console.log(`\x1b[32m[BotLog] Bot arrived to target location. ${bot.entity.position}\x1b[0m`)
-  })
-  
-  
-  if(config.utils['auto-reconnect']){
-      bot.on('end', function(){
-        createBot1()
-        
-        
-      })
-  }
-
-  bot.on("death", function(){
-      console.log(`\x1b[33m[BotLog] Bot has been died and was respawned ${bot.entity.position}`, '\x1b[0m')
-      bot.chat(`BOT has been died, respawn location ${bot.entity.position}`)
-  })
-
-  
-
-  bot.on('kicked', (reason) => console.log('\x1b[33m',`[BotLog] Bot was kicked from the server. Reason: \n${reason}`, '\x1b[0m'))
-  bot.on('error', err => console.log(`\x1b[31m[ERROR] ${err.message}`, '\x1b[0m'))
-
-}
-
-
-
-
-
-function createBotgold () {
-  const bot = mineflayer.createBot({
-      username: config['bot-account-gold']['username'],
-      password: config['bot-account-gold']['password'],
-      auth: config['bot-account-gold']['type'],
-      host: config.server.ip,
-      port: config.server.port,
-      version: config.server.version
-  })
-
-  
-
-  bot.loadPlugin(pathfinder)
-  const mcData = require('minecraft-data')(bot.version)
-  const defaultMove = new Movements(bot, mcData)
-  bot.settings.colorsEnabled = false
-
-  bot.once("spawn", function(){
-      console.log("\x1b[33m[BotLog] Bot joined to the server", '\x1b[0m')
-
-      if(config.utils['auto-auth'].enabled){
-        console.log("[INFO] Started auto-auth module")
-
-          var password = config.utils['auto-auth'].password
-          setTimeout(function() {
-              bot.chat(`/register ${password} ${password}`)
-              bot.chat(`/login ${password}`)
-          }, 500);
-
-          console.log(`[Auth] Authentification commands executed.`)
-      }
-
-      if(config.utils['chat-messages'].enabled){
-        console.log("[INFO] Started chat-messages module")
-        var messages = config.utils['chat-messages']['messages']
-
-          if(config.utils['chat-messages'].repeat){
-            var delay = config.utils['chat-messages']['repeat-delay']
-            let i = 0
-
-            let msg_timer = setInterval(() => {
-                bot.chat(`${messages[i]}`)
-
-                if(i+1 == messages.length){
-                    i = 0
-                } else i++
-            }, delay * 1000)
-          } else {
-              messages.forEach(function(msg){
-                  bot.chat(msg)
-              })
-        }
-      }
-      
-
-      const pos = config.position
-
-      if (config.position.enabled){
-          console.log(`\x1b[32m[BotLog] Starting moving to target location (${pos.x}, ${pos.y}, ${pos.z})\x1b[0m`)
-          bot.pathfinder.setMovements(defaultMove)
-          bot.pathfinder.setGoal(new GoalBlock(pos.x, pos.y, pos.z))
-      }
-      
-      if(config.utils['anti-afk'].enabled){
-        bot.setControlState('jump', true)
-        if(config.utils['anti-afk'].sneak){
-            bot.setControlState('sneak', true)
-        }
-      }
-
-      bot.on('chat', (username, message) => {
-        
-        if (message === 'health') healthcheck()
-        if (message === 'hitgold') netherafk()
-        if (message === 'quitgold') quit()
-        
-      })
-      
-      bot.on('time', function(time) {
-        var yaw = Math.random()*pi - (0.5*pi);
-        var pitch = Math.random()*pi - (0.5*pi);
-        bot.look(yaw,-90,false);
-        bot.activateItem()
-});
-
-      
-      
-  })
-
-  function quit(){
-    allowgoldreconnect=0;
-    bot.quit();
-  }
-  function netherafk () {
-    setInterval(function() {bot.attack(bot.nearestEntity())}, 15000);
-      
-
-}
-  
-  function healthcheck () {
-      
-        bot.chat(`I have ${bot.health} health and ${bot.food} food`)
-      
-    
-
-  }
-  
-
-
-  
-
-  bot.on("chat", function(username, message){
-      if(config.utils['chat-log']){
-          console.log(`[ChatLog] <${username}> ${message}`)
-      }
-  })
-
-  bot.on("goal_reached", function(){
-      console.log(`\x1b[32m[BotLog] Bot arrived to target location. ${bot.entity.position}\x1b[0m`)
-  })
-
-  bot.on("death", function(){
-      console.log(`\x1b[33m[BotLog] Bot has been died and was respawned ${bot.entity.position}`, '\x1b[0m')
-      bot.chat(`BOT has been died, respawn location ${bot.entity.position}`)
-  })
-
-  createBotgold1()
-
-  if(config.utils['auto-reconnect']){
-    bot.on('end', function(){
-        if (allowgoldreconnect === 1){
-          createBotgold()
-        }
-    })
-}
-
-  
-
-  bot.on('kicked', (reason) => console.log('\x1b[33m',`[BotLog] Bot was kicked from the server. Reason: \n${reason}`, '\x1b[0m'))
-  bot.on('error', err => console.log(`\x1b[31m[ERROR] ${err.message}`, '\x1b[0m'))
-
-  
-}
-
-
-function createBotgold1 () {
-  const bot = mineflayer.createBot({
-      username: config['bot-account-gold1']['username'],
-      password: config['bot-account-gold1']['password'],
-      auth: config['bot-account-gold1']['type'],
-      host: config.server.ip,
-      port: config.server.port,
-      version: config.server.version
-  })
-
-  
-
-  bot.loadPlugin(pathfinder)
-  const mcData = require('minecraft-data')(bot.version)
-  const defaultMove = new Movements(bot, mcData)
-  bot.settings.colorsEnabled = false
-
-  bot.once("spawn", function(){
-      console.log("\x1b[33m[BotLog] Bot joined to the server", '\x1b[0m')
-
-      if(config.utils['auto-auth'].enabled){
-        console.log("[INFO] Started auto-auth module")
-
-          var password = config.utils['auto-auth'].password
-          setTimeout(function() {
-              bot.chat(`/register ${password} ${password}`)
-              bot.chat(`/login ${password}`)
-          }, 500);
-
-          console.log(`[Auth] Authentification commands executed.`)
-      }
-
-      if(config.utils['chat-messages'].enabled){
-        console.log("[INFO] Started chat-messages module")
-        var messages = config.utils['chat-messages']['messages']
-
-          if(config.utils['chat-messages'].repeat){
-            var delay = config.utils['chat-messages']['repeat-delay']
-            let i = 0
-
-            let msg_timer = setInterval(() => {
-                bot.chat(`${messages[i]}`)
-
-                if(i+1 == messages.length){
-                    i = 0
-                } else i++
-            }, delay * 1000)
-          } else {
-              messages.forEach(function(msg){
-                  bot.chat(msg)
-              })
-        }
-      }
-      
-
-      const pos = config.position
-
-      if (config.position.enabled){
-          console.log(`\x1b[32m[BotLog] Starting moving to target location (${pos.x}, ${pos.y}, ${pos.z})\x1b[0m`)
-          bot.pathfinder.setMovements(defaultMove)
-          bot.pathfinder.setGoal(new GoalBlock(pos.x, pos.y, pos.z))
-      }
-      
-      if(config.utils['anti-afk'].enabled){
-        bot.setControlState('jump', true)
-        if(config.utils['anti-afk'].sneak){
-            bot.setControlState('sneak', true)
-        }
-      }
-
-      bot.on('chat', (username, message) => {
-        
-        if (message === 'health') healthcheck()
-        if (message === 'hitgold') netherafk()
-        if (message === 'look') lookatthis()
-        if (message === 'quitgold') quit()
-        
-        
-      })
-      
-      
-      
-
-    
-  })
-  function quit(){
-    allowgoldreconnect=0;
-    bot.quit();
-  }
-
-
-  function netherafk () {
-    setInterval(function() {bot.attack(bot.nearestEntity())}, 2500);
-      
-
-}
-
-function lookatthis(){
-  bot.look(0,-1.5,false);
-}
-
-
-
-  
-  function healthcheck () {
-      
-        bot.chat(`I have ${bot.health} health and ${bot.food} food`)
-      
-    
-
-  }
-  
-
-
-  
-
-  bot.on("chat", function(username, message){
-      if(config.utils['chat-log']){
-          console.log(`[ChatLog] <${username}> ${message}`)
-      }
-  })
-
-  bot.on("goal_reached", function(){
-      console.log(`\x1b[32m[BotLog] Bot arrived to target location. ${bot.entity.position}\x1b[0m`)
-  })
-
-  bot.on("death", function(){
-      console.log(`\x1b[33m[BotLog] Bot has been died and was respawned ${bot.entity.position}`, '\x1b[0m')
-      bot.chat(`BOT has been died, respawn location ${bot.entity.position}`)
-  })
-
-  
-
-  bot.on('kicked', (reason) => console.log('\x1b[33m',`[BotLog] Bot was kicked from the server. Reason: \n${reason}`, '\x1b[0m'))
-  bot.on('error', err => console.log(`\x1b[31m[ERROR] ${err.message}`, '\x1b[0m'))
-
-}
-
-
-
-
-
-
-
-
-
-function raidfarm () {
-  const bot = mineflayer.createBot({
-      username: config['bot-account-rider']['username'],
-      password: config['bot-account-rider']['password'],
-      auth: config['bot-account-rider']['type'],
-      host: config.server.ip,
-      port: config.server.port,
-      version: config.server.version
-  })
-
-  bot.loadPlugin(pathfinder)
-  const mcData = require('minecraft-data')(bot.version)
-  const defaultMove = new Movements(bot, mcData)
-  bot.settings.colorsEnabled = false
-
-  bot.once("spawn", function(){
-      console.log("\x1b[33m[BotLog] Bot joined to the server", '\x1b[0m')
-
-      if(config.utils['auto-auth'].enabled){
-        console.log("[INFO] Started auto-auth module")
-
-          var password = config.utils['auto-auth'].password
-          setTimeout(function() {
-              bot.chat(`/register ${password} ${password}`)
-              bot.chat(`/login ${password}`)
-          }, 500);
-
-          console.log(`[Auth] Authentification commands executed.`)
-      }
-
-      bot.chat('look = lookdown')
-      bot.chat('attack = atk armorstand')
-      bot.chat('level, health, quit')
-      
-
-      const pos = config.position
-
-      if (config.position.enabled){
-          console.log(`\x1b[32m[BotLog] Starting moving to target location (${pos.x}, ${pos.y}, ${pos.z})\x1b[0m`)
-          bot.pathfinder.setMovements(defaultMove)
-          bot.pathfinder.setGoal(new GoalBlock(pos.x, pos.y, pos.z))
-      }
-      
-      if(config.utils['anti-afk'].enabled){
-        bot.setControlState('jump', true)
-        if(config.utils['anti-afk'].sneak){
-            bot.setControlState('sneak', true)
-        }
-      }
-
-      
-      bot.on('chat', (username, message) => {
-        
-        if (message === 'attack') startfarm()
-        if (message === 'health') healthcheck()
-        if (message === 'level') levelcheck()
-        if (message === 'quit') quitbot()
-        if (message === 'look') lookatthis()
-        
-        
-      })
-    
-      
-  })
-  
-function lookatthis(){
-  bot.look(0,-1.5,false);
-}
-
-  
-  bot.on('entitySpawn', (entity) => {
-    if (entity.name === 'vex') {
-      console.log('ADA VEX');
-      bot.chat(`${entity.mobType} spawned at ${entity.position}, IM OUTTA HERE!!!`)
-
-      quitbot()
-    }
-    
-  })
-  
-function healthcheck () {
-      
-        bot.chat(`I have ${bot.health} health and ${bot.food} food`)
-        
-  }
-  
- function levelcheck () {
-      
-        bot.chat(`I am level ${bot.experience.level}`)
-
-  }
-
-  function startfarm(){
-    bot.chat(`Attacking ${bot.nearestEntity()}`)
-    setInterval(attackEntity, 1500);
-  }
-  function attackEntity () {
-    
-    const entity = bot.nearestEntity()
-    if (!entity) {
-      bot.chat('No nearby entities')
-    } else {
-      //bot.chat(`Attacking ${entity.name ?? entity.username}`)
-      
-      bot.attack(entity);
-    }
-  }
-  
-  function quitbot () {
-    bot.quit(`quitting`)
-    reconnect=1;
-  }
-  
-
-  bot.on("chat", function(username, message){
-      if(config.utils['chat-log']){
-          console.log(`[ChatLog] <${username}> ${message}`)
-      }
-  })
-
-  bot.on("goal_reached", function(){
-      console.log(`\x1b[32m[BotLog] Bot arrived to target location. ${bot.entity.position}\x1b[0m`)
-  })
-
-  bot.on("death", function(){
-      console.log(`\x1b[33m[BotLog] Bot has been died and was respawned ${bot.entity.position}`, '\x1b[0m')
-  })
-
-  if(config.utils['auto-reconnect']){
-      bot.on('end', function(){
-          if (reconnect === 0){
-            raidfarm()
-          }
-      })
-  }
-
-  bot.on('kicked', (reason) => console.log('\x1b[33m',`[BotLog] Bot was kicked from the server. Reason: \n${reason}`, '\x1b[0m'))
-  bot.on('error', err => console.log(`\x1b[31m[ERROR] ${err.message}`, '\x1b[0m'))
-
-}
-
-
-
-
-
+var reconnect = 0;
+const botlist = [];
 
 
 
 
 
 createBot()
+
+//BOT UTAMA ADMIN
+function createBot() {
+  const bot = mineflayer.createBot({
+    username: config['bot-account']['username'],
+    password: config['bot-account']['password'],
+    auth: config['bot-account']['type'],
+    host: config.server.ip,
+    port: config.server.port,
+    version: config.server.version
+  })
+
+
+
+  bot.on('playerJoined', function () { bot.chat(`Hardcore Server, DIE = Spectator. PROJECT BARU ketik 'info' `) })
+
+
+
+  //login DONT WORRY
+  bot.once("spawn", function () {
+
+    console.log("\x1b[33m[BotLog] Bot joined to the server", '\x1b[0m')
+
+    if (config.utils['auto-auth'].enabled) {
+      console.log("[INFO] Started auto-auth module")
+
+      var password = config.utils['auto-auth'].password
+      setTimeout(function () {
+        bot.chat(`/register ${password} ${password}`)
+        bot.chat(`/login ${password}`)
+      }, 500);
+
+      console.log(`[Auth] Authentification commands executed.`)
+    }
+
+    //CEK CHAT FUNCTION
+    if (config.utils['chat-messages'].enabled) {
+      console.log("[INFO] Started chat-messages module")
+      var messages = config.utils['chat-messages']['messages']
+
+      if (config.utils['chat-messages'].repeat) {
+        var delay = config.utils['chat-messages']['repeat-delay']
+        let i = 0
+
+        let msg_timer = setInterval(() => {
+          bot.chat(`${messages[i]}`)
+
+          if (i + 1 == messages.length) {
+            i = 0
+          } else i++
+        }, delay * 1000)
+      } else {
+        messages.forEach(function (msg) {
+          bot.chat(msg)
+        })
+      }
+    }
+
+
+
+
+
+
+    //ANTI AFK
+    bot.on('time', function (time) {
+      var yaw = Math.random() * pi - (0.5 * pi);
+      var pitch = Math.random() * pi - (0.5 * pi);
+      bot.look(yaw, -90, false);
+
+
+
+    });
+    bot.loadPlugin(autoeat)
+    afk(10000);
+
+
+
+
+    function afk(waktu) {
+      setTimeout(() => {
+
+        if ((bot.health < 20) && (bot.food < 20)) {
+          timing = 10000;
+          bot.autoEat.enable()
+          bot.autoEat.eat()
+
+        } else {
+          bot.attack(bot.nearestEntity(e => e.mobType == 'Armor Stand'));
+          bot.autoEat.disable();
+          timing = 10000;
+        }
+        afk(timing);
+      }, waktu)
+    }
+  })
+
+  function healthcheck() {
+
+    bot.chat(`I have ${bot.health} health ${bot.food} food and ${bot.experience.level} level XP`)
+  }
+
+
+
+
+
+  bot.on("chat", function (username, message) {
+    //CHAT LOGGER
+    if (config.utils['chat-log']) {
+      console.log(`[ChatLog] <${username}> ${message}`)
+    }
+  })
+  //BOT MOVE
+  bot.on("goal_reached", function () {
+    console.log(`\x1b[32m[BotLog] Bot arrived to target location. ${bot.entity.position}\x1b[0m`)
+  })
+  //BOT DEAD
+  bot.on("death", function () {
+    console.log(`\x1b[33m[BotLog] Bot has been died and was respawned ${bot.entity.position}`, '\x1b[0m')
+    bot.chat(`BOT has been died, respawn location ${bot.entity.position}`)
+  })
+
+
+  //RECONNECT HARUSNYA CUMA ON DI BOT UTAMA DOANG
+  if (config.utils['auto-reconnect'] && reconnect == 0) {
+    bot.on('end', function () {
+      createBot()
+
+
+    })
+  }
+
+
+
+  //retry login
+  bot.on('kicked', (reason) => console.log('\x1b[33m', `[BotLog] Bot was kicked from the server. Reason: \n${reason}`, '\x1b[0m'))
+  bot.on('error', err => console.log(`\x1b[31m[ERROR] ${err.message}`, '\x1b[0m'))
+
+
+
+
+
+
+  //bot chat
+  bot.on('chat', (username, message) => {
+    if (message == 'reset lists') {
+      botlist = [];
+    }
+    //check health
+    if (message === 'health') healthcheck()
+
+
+
+    //SUMMON OTHER BOT
+    const arrmessage = message.split(" ");
+    if (arrmessage[0] == 'summon') {//arrmsg0=masage index start from 0
+      botlist.push(arrmessage[1])
+      bot.chat(`Bot List: ${botlist}`)
+      botbaru(arrmessage[1], 'unknown'); //command for new bot
+
+    }
+    //OTHER BOT ACTIVITY
+
+    let index = botlist.indexOf(arrmessage[0]);
+    if (index != -1) {//force TP working
+      if (arrmessage[1] == 'forcetp') { bot.chat(`/tp ${arrmessage[0]} ${arrmessage[2]}`) }
+
+
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+    if (message === 'console') { console.log('test') }
+    if (message === 'list bot') { bot.chat(`Bot List: ${botlist}`) }
+    if (message == 'info') { bot.chat(`${config.quest}`) }
+
+  })
+
+  bot.on('entitySpawn', (entity) => {
+    if (entity.name === 'vex') {
+      console.log('ADA VEX');
+      bot.chat(`${entity.mobType} spawned at ${entity.position}, ADA VEX COEG BYEEE!!!`)
+      reconnect = 1;
+      bot.quit('');
+    }
+
+  })
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+}
+
+
+
+
+//BOT SPAWNAN
+function botbaru(botname) {
+  const bot = mineflayer.createBot({
+    username: botname,
+    password: '',
+    auth: config['bot-account']['type'],
+    host: config.server.ip,
+    port: config.server.port,
+    version: config.server.version
+  })
+  bot.loadPlugin(autoeat)
+
+  bot.on('chat', (username, message) => {
+    const arrmessage = message.split(" ");
+    if (message == 'health') { healthcheck() };
+    let index = botlist.indexOf(arrmessage[0]);
+    if (index != -1) {
+
+      //specific bot
+      if (botname == arrmessage[0]) {
+        if (arrmessage[1] == 'quit') {
+          bot.quit('')
+          reconnect = 1;
+          botlist.splice(index, 1)
+        }
+        if (arrmessage[1] == 'attack') {
+          let tipeattack = ''
+          if (arrmessage[2] == 1) { tipeattack = 'Armor Stand' }
+          if (arrmessage[2] == 2) { tipeattack = 'Cave Spider' }
+          let target = bot.nearestEntity(e => e.mobType == tipeattack && bot.entity.position.distanceTo(e.position) < 2)
+          if (!target) { bot.chat(`gaada ${tipeattack} bgst!`) }
+          else {
+            bot.chat(`jotos  ${tipeattack} sekali`)
+            bot.attack(target)
+          }
+          if ((arrmessage[3] == 'setiap') && (target)) {
+            console.log(`ada command`)
+            bot.chat(`Attck ${tipeattack} selamanya`)
+            Targeting(tipeattack, arrmessage[4]);
+          }
+
+        }
+        if (arrmessage[1] == 'afk') {
+          afk(10000);
+          bot.chat('AFK, pastikan ada armorstand');
+
+
+
+
+          function afk(waktu) {
+            setTimeout(() => {
+
+              if ((bot.health < 20) && (bot.food < 20)) {
+                timing = 10000;
+                bot.autoEat.enable()
+                bot.autoEat.eat()
+
+              } else {
+                bot.attack(bot.nearestEntity(e => e.mobType == 'Armor Stand'));
+                bot.autoEat.disable();
+                timing = 10000;
+              }
+              afk(timing);
+            }, waktu)
+          }
+
+        }
+
+
+
+
+
+
+      }
+
+    }
+  })
+
+
+  function itemByName(name) {
+    return bot.inventory.items().filter(item => item.name === name)[0]
+  }
+
+  function equipItem(name, destination) {
+    const item = itemByName(name)
+    if (item) {
+      bot.equip(item, destination, checkIfEquipped)
+    } else {
+      console.log(`I have no ${name}`)
+    }
+
+    function checkIfEquipped(err) {
+      if (err) {
+        console.log(`cannot equip ${name}: ${err.message}`)
+      } else {
+        console.log(`equipped ${name}`)
+      }
+    }
+  }
+
+
+
+  function Targeting(tipemobs, delay) {
+    let timing = delay;
+    loop(timing);
+    function mainAttack(tipemobs) {
+      equipItem('netherite_sword', 'hand')
+      let targetmobs = bot.nearestEntity(e => e.mobType == tipemobs && bot.entity.position.distanceTo(e.position) < 2)
+      if (!targetmobs) {
+        bot.chat(`${tipemobs}nya ilang boss! Izin off`)
+        let index = botlist.indexOf(botname);
+        botlist.splice(index, 1)
+        bot.quit('');
+        reconnect=1;
+
+      }
+      else {
+        bot.attack(targetmobs)
+        //bot.chat(`ada target!`)
+      }
+    }
+    //keep eating
+
+    function loop(waktu) {
+      setTimeout(() => {
+
+        if ((bot.health < 20) && (bot.food < 20)) {
+          timing = 5000;
+          bot.autoEat.enable()
+          bot.autoEat.eat()
+
+        } else {
+          mainAttack(tipemobs);
+          bot.autoEat.disable();
+          timing = delay;
+        }
+        loop(timing);
+      }, waktu)
+    }
+
+    bot.on('health', () => { console.log(`${bot.name} HP ${bot.health} Hunger ${bot.food} XP ${bot.experience.level}`) })
+  };
+
+  bot.on('entitySpawn', (entity) => {
+    if (entity.name === 'vex') {
+      console.log('ADA VEX');
+      let index = botlist.indexOf(botname);
+      reconnect = 1;
+      bot.chat(`${entity.mobType} spawned at ${entity.position}, ADA VEX COEG BYEEE!!!`)
+      botlist.splice(index, 1)
+      bot.quit('');
+    }
+
+  })
+  function healthcheck() {
+
+    bot.chat(`I have ${bot.health} health ${bot.food} food and ${bot.experience.level} level XP`)
+  }
+
+
+
+
+  bot.on('autoeat_error', (error) => {
+    console.error(error)
+  })
+
+
+  bot.on('end', function () {
+    if (config.utils['auto-reconnect'] && reconnect == 0) {
+      botbaru(botname);
+
+    }
+
+
+
+
+  });
+
+
+
+}
+
+

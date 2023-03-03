@@ -1,39 +1,18 @@
 {
+    "quest":["PROJECT: OBSIDIAN FARM THE END Seed 5147723731320877628 BASE: 700 -900 Nether HUB: 73 -106 Slime Farm: 2100 -700 RAID Farm: 2600 -750"],
+
     "bot-account":{ 
-        "username": "StonerMind",
+        "username": "The_Server",
         "password": "",
         "type": ""
     },
 
-    "bot-account1":{ 
-        "username": "GateGuardianSCP",
-        "password": "",
-        "type": ""
-    },
-
-    "bot-account-gold":{ 
-        "username": "GoldaCofee",
-        "password": "",
-        "type": ""
-    },
-
-    "bot-account-gold1":{ 
-        "username": "PogGer",
-        "password": "",
-        "type": ""
-    },
-
-    "bot-account-rider":{ 
-        "username": "Riders",
-        "password": "",
-        "type": ""
-    },
     
-
     "server":{
-        "ip": "windows.ploudos.com",
-        "port": 14209,
-        "version": "1.18"
+        "ip": "diebanned2.ploudos.me",
+        "port": 25565,
+        "version": "1.19.3"
+        
     },
 
     "position":{
@@ -60,7 +39,7 @@
             "repeat-delay": 60,
 
             "messages": [
-                "LOADING..."
+                "IM ONLINE BRUH!"
             ]
         },
 
